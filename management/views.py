@@ -5,7 +5,7 @@ from management.models import *
 from management.forms import *
 from management.emails import *
 from flask import render_template, flash, redirect, url_for, request
-from flask_login import current_user, login_user
+from flask_login import current_user, login_user, logout_user
 from itsdangerous import SignatureExpired
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -142,3 +142,8 @@ def login():
     return render_template('auth/login.html', form=form)
 
 
+@app.route('/logout')
+def logout():
+    logout_user()
+    flash('You are logged out successfully', "success")
+    return redirect(url_for('index'))
