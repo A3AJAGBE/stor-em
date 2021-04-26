@@ -32,8 +32,8 @@ def merchant():
     merchants = Merchants.query.filter_by(user_id=current_user.id)
     form = MerchantForm()
     if form.validate_on_submit():
-        merchant_name = form.merchant_name.data
-        contact_name = form.contact_name.data
+        merchant_name = form.merchant_name.data.title()
+        contact_name = form.contact_name.data.title()
         email = form.email.data
         phone_number = form.phone_number.data
 
@@ -69,6 +69,49 @@ def merchant():
                 flash(f'"{merchant_name}" merchant info added successfully', "success")
                 return redirect(request.referrer)
     return render_template('merchant.html', form=form, merchants=merchants)
+
+
+@app.route('/edit merchant/<int:merchant_id>', methods=['GET', 'POST'])
+@login_required
+def edit_merch(merchant_id):
+    edit_merchant = Merchants.query.get(merchant_id)
+    editMerchant = MerchantForm(
+        merchant_name=edit_merchant.merchant_name,
+        contact_name=edit_merchant.contact_name,
+        email=edit_merchant.email,
+        phone_number=edit_merchant.phone_number,
+    )
+    if editMerchant.validate_on_submit():
+
+        try:
+            number = parse(editMerchant.phone_number.data)
+            if not is_possible_number(number):
+                flash("Check the phone number again", "danger")
+                return redirect(request.referrer)
+            elif not is_valid_number(number):
+                flash("Invalid phone number", "danger")
+                return redirect(request.referrer)
+        except NumberParseException:
+            flash("Add the country code to phone number, eg. +353", "danger")
+            return redirect(request.referrer)
+        else:
+            edit_merchant.merchant_name = editMerchant.merchant_name.title()
+            edit_merchant.contact_name = editMerchant.contact_name.title()
+            edit_merchant.email = editMerchant.email.data
+            edit_merchant.phone_number = editMerchant.phone_number.data
+            db.session.commit()
+            flash(f'"{edit_merchant.merchant_name}" merchant information updated successfully', "success")
+            return redirect(url_for('merchant'))
+    return render_template('edit_merchant.html', form=editMerchant)
+
+
+@app.route("/delete merchant/<int:merchant_id>")
+def delete_merch(merchant_id):
+    delete_med = Merchants.query.get(merchant_id)
+    db.session.delete(delete_med)
+    db.session.commit()
+    flash("Merchant deleted successfully", "success")
+    return redirect(request.referrer)
 
 
 @app.route('/register', methods=['GET', 'POST'])
