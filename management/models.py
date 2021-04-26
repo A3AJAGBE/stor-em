@@ -1,5 +1,6 @@
 from management import db
 from flask_login import UserMixin
+from datetime import datetime
 
 
 class Users(UserMixin, db.Model):
@@ -14,3 +15,7 @@ class Users(UserMixin, db.Model):
 
     def __repr__(self):
         return self.business_name
+
+    def get_date(self):
+        date = self.email_confirmed_at.strftime('%B %d, %Y')
+        return date
