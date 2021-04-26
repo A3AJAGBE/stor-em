@@ -2,6 +2,7 @@ body {
     font-family: 'ABeeZee', sans-serif;
     background: #181818;
     color: #F8F8F8;
+    font-size: 1.2rem;
 }
 
 .logo-text, h1 {
@@ -9,16 +10,37 @@ body {
     font-weight: 600;
 }
 
-.centered {
+.centered, .form-centered {
   display: flex;
   align-items: center;
   height: 90vh;
 }
 
+/* Form styling */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.help-block {
+    color: red;
+}
+
+
 
 /* Small screen styling (downwards) */
-@media (max-width: 350px) {
+@media (max-width: 370px) {
     .centered {
-      margin-top: 70px;
+      margin-top: 80px;
+    }
+}
+
+/* Small screen styling (downwards) */
+@media (max-width: 330px) {
+    .centered {
+      margin-top: 120px;
+    }
+
+    .form-centered {
+         margin-top: 15px;
     }
 }
