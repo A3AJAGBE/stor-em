@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %} Internal Server Error {% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+<div class="centered">
+  <div class="container">
+    <div class="px-4 my-5 text-center">
+      <img class="d-block mx-auto mb-4" src="{{ url_for('static', filename='images/500.png') }}" alt="error 500 image" width="300" height="300">
+      <h1 class="display-3 fw-bold">Don't Panic</h1>
+      <div class="col-lg-6 mx-auto">
+        <p class="lead mb-4">The issue is from us and we are aware. <br> It will be resolved ASAP, kindly try again after awhile. <br> Thank you.</p>
+          <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+           <a href="{{ url_for('index') }}" class="btn btn-light btn-lg px-4">Home Page</a>
+        </div>
+      </div>
+      </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %} File Not Found {% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+<div class="centered">
+  <div class="container">
+    <div class="px-4 my-5 text-center">
+      <img class="d-block mx-auto mb-4" src="{{ url_for('static', filename='images/404.png') }}" alt="error 404 image" width="300" height="300">
+      <h1 class="display-3 fw-bold">Oops!!!</h1>
+      <div class="col-lg-6 mx-auto">
+        <p class="lead mb-4">You missed the way there friend 🤔, but don't worry. <br> We will help get to home page.</p>
+          <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+           <a href="{{ url_for('index') }}" class="btn btn-light btn-lg px-4">Home Page</a>
+        </div>
+      </div>
+      </div>
+  </div>
+</div>
+
+{% endblock %}
