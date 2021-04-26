@@ -34,6 +34,10 @@ def register():
         # Check if the email is unique
         if Users.query.filter_by(email=email).first():
             flash("That email already exists, try another", "danger")
+            return redirect(request.referrer)
+        elif Users.query.filter_by(business_name=business_name).first():
+            flash("That business name exists, use another", "danger")
+            return redirect(request.referrer)
         else:
             encrypt_password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
 
@@ -98,8 +102,10 @@ def email_unconfirmed():
 
         if not user:
             flash('That is not a registered email address.', 'danger')
+            return redirect(request.referrer)
         elif user.email_confirmed:
             flash('That email address has already been confirmed.', 'danger')
+            return redirect(request.referrer)
         else:
             token = generate_token(email)
             user_email = email
@@ -129,8 +135,10 @@ def login():
 
         if not user:
             flash("Invalid email address, try again.", "danger")
+            return redirect(request.referrer)
         elif not check_password_hash(user.password, password):
             flash('Password incorrect, try again.', "danger")
+            return redirect(request.referrer)
         else:
             if user.email_confirmed:
                 login_user(user)
