@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %} Profile {% endblock %}
+
+{% block header %}
+
+<nav class="navbar navbar-expand-lg navbar-light bg-warning"  id="top">
+      <div class="container">
+        <a href="{{ url_for('index') }}" class="navbar-brand text-decoration-none link-dark">
+        <span class="fs-1 logo-text">A3AJAGBE STOR'EM</span>
+      </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav" >
+              <ul class="navbar-nav ml-auto">
+                  <div class="dropdown authenticated d-grid d-md-block gap-2">
+                  <button class="btn btn-dark btn-lg dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                      {{current_user.business_name}}
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="dropdownMenuButton1">
+                      <li><a class="dropdown-item" href="{{ url_for('profile', name=current_user.business_name) }}">Profile</a></li>
+                      <li><a class="dropdown-item" href="#">Change Password</a></li>
+                      <li><hr class="dropdown-divider"></li>
+                      <li><a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a></li>
+                  </ul>
+              </div>
+              </ul>
+            </div>
+      </div>
+    </nav>
+{% endblock %}
+
+{% block content %}
+
+ <div class="container my-4">
+   {% include "_messages.html" %}
+
+   <h1>Welcome user</h1>
+ </div>
+
+{% endblock %}
