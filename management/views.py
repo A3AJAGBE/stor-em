@@ -221,3 +221,35 @@ def reset_password(token):
             flash(f'Password reset successful "{user.business_name}", you are now logged in.', 'success')
             return redirect(url_for('profile', name=user.business_name))
     return render_template('auth/password_reset.html', form=form)
+
+
+@app.route('/change_password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    form = ChangePasswordForm()
+    if form.validate_on_submit():
+        old_password = form.old_password.data
+        new_password = form.new_password.data
+
+        encrypt_new_password = generate_password_hash(new_password, method='pbkdf2:sha256', salt_length=8)
+
+        user = Users.query.filter_by(email=current_user.email).first()
+
+        if not check_password_hash(user.password, old_password):
+            flash('Old password is incorrect, try again.', 'danger')
+            return redirect(request.referrer)
+        else:
+            user.password = encrypt_new_password
+            db.session.commit()
+            user_email = user.email
+            reset_password_request_url = url_for('reset_password_request', _external=True)
+            text_body = render_template('emails/password_changed.txt',
+                                        reset_password_request_url=reset_password_request_url,
+                                        name=user.business_name)
+            html_body = render_template('emails/password_changed.html',
+                                        reset_password_request_url=reset_password_request_url,
+                                        name=user.business_name)
+            email_password_change(user_email, text_body, html_body)
+            flash(f'Password successfully changed {user.business_name}.', 'success')
+            return redirect(url_for('profile', name=user.business_name))
+    return render_template('auth/change_password.html', form=form)

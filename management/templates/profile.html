@@ -19,7 +19,7 @@
                   </button>
                   <ul class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="dropdownMenuButton1">
                       <li><a class="dropdown-item" href="{{ url_for('profile', name=current_user.business_name) }}">Profile</a></li>
-                      <li><a class="dropdown-item" href="#">Change Password</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('change_password') }}">Change Password</a></li>
                       <li><hr class="dropdown-divider"></li>
                       <li><a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a></li>
                   </ul>
