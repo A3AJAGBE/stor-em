@@ -13,7 +13,7 @@
 
            {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "lg btn-warning"}, extra_classes="p-3 border rounded-3 bg-light text-dark") }}
             <h4 class="pt-3">Don't have an account? <a href="{{ url_for('register') }}" class="text-warning text-decoration-none">Register</a></h4>
-            <h5><a href="#" class="text-danger text-decoration-none">Forgot Password?</a></h5>
+            <h5><a href="{{ url_for('reset_password_request') }}" class="text-danger text-decoration-none">Forgot Password?</a></h5>
       </div>
     </div>
   </div>
