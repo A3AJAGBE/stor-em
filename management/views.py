@@ -22,7 +22,7 @@ def index():
 def register():
     form = RegisterForm()
     if current_user.is_authenticated:
-        flash("You are unable to view that page because you are currently logged in.", "info")
+        flash("You are unable to view that page because you are currently logged in.", "warning")
         return redirect(url_for('index'))
     if form.validate_on_submit():
         business_name = form.business_name.data.title()
@@ -58,11 +58,40 @@ def register():
     return render_template('auth/register.html', form=form)
 
 
+@app.route('/unconfirmed', methods=['GET', 'POST'])
+def email_unconfirmed():
+    if current_user.is_authenticated and current_user.email_confirmed:
+        flash("You are unable to view that page because you are verified user.", "warning")
+        return redirect(url_for('index'))
+    form = NewEmailConfirmationRequestForm()
+    if form.validate_on_submit():
+        email = form.email.data
+
+        user = Users.query.filter_by(email=email).first()
+
+        if not user:
+            flash('That is not a registered email address.', 'danger')
+        elif user.email_confirmed:
+            flash('That email address has already been confirmed.', 'danger')
+        else:
+            token = generate_token(email)
+            user_email = email
+            confirm_email_url = url_for('confirm_email', token=token, _external=True)
+            text_body = render_template('emails/resend_confirmation.txt', confirm_email_url=confirm_email_url,
+                                        name=user.business_name)
+            html_body = render_template('emails/resend_confirmation.html', confirm_email_url=confirm_email_url,
+                                        first_name=user.business_name)
+            email_confirmation_resend(user_email, text_body, html_body)
+            flash(f'A new email confirmation has been sent "{user.business_name}".', 'success')
+            return redirect(request.referrer)
+    return render_template('auth/email_unconfirmed.html', form=form)
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if current_user.is_authenticated:
-        flash("You are unable to view that page because you are currently logged in.", "info")
+        flash("You are unable to view that page because you are currently logged in.", "warning")
         return redirect(url_for('index'))
     if form.validate_on_submit():
         pass
