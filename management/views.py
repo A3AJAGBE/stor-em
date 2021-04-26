@@ -1,9 +1,11 @@
+from datetime import datetime
+
 from management import app, login_manager
 from management.models import *
 from management.forms import *
 from management.emails import *
 from flask import render_template, flash, redirect, url_for, request
-from flask_login import current_user
+from flask_login import current_user, login_user
 from itsdangerous import SignatureExpired
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -56,6 +58,31 @@ def register():
                   "success")
             return redirect(request.referrer)
     return render_template('auth/register.html', form=form)
+
+
+@app.route('/confirm/<token>', methods=['GET', 'POST'])
+def confirm_email(token):
+    try:
+        email = confirm_token(token)
+    except SignatureExpired:
+        flash('That confirmation link is Invalid or has expired', 'danger')
+        return redirect(url_for('email_unconfirmed'))
+    else:
+        user = Users.query.filter_by(email=email).first_or_404()
+
+        if user.email_confirmed:
+            flash(f'"{user.business_name}", you have confirmed that email. Kindly login.', 'warning')
+            return redirect(url_for('login'))
+        else:
+            user.email_confirmed = True
+            user.email_confirmed_at = datetime.utcnow()
+            user.is_active = True
+            db.session.add(user)
+            db.session.commit()
+
+            login_user(user)
+            flash(f'Email confirmation successful {user.business_name}, you are now logged in.', 'success')
+            return redirect(url_for('index'))
 
 
 @app.route('/unconfirmed', methods=['GET', 'POST'])
