@@ -12,7 +12,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 @login_manager.user_loader
 def load_user(user_id):
-    return Users.get(user_id)
+    return Users.query.get(user_id)
 
 
 @app.route('/')
@@ -111,7 +111,7 @@ def email_unconfirmed():
             email_confirmation_resend(user_email, text_body, html_body)
             flash(f'A new email confirmation has been sent "{user.business_name}".', 'success')
             return redirect(request.referrer)
-    return render_template('auth/email_unconfirmed.html', form=form)
+    return render_template('auth/unconfirmed_email.html', form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -121,7 +121,24 @@ def login():
         flash("You are unable to view that page because you are currently logged in.", "warning")
         return redirect(url_for('index'))
     if form.validate_on_submit():
-        pass
+        email = form.email.data
+        password = form.password.data
+
+        # Find the user by email
+        user = Users.query.filter_by(email=email).first()
+
+        if not user:
+            flash("Invalid email address, try again.", "danger")
+        elif not check_password_hash(user.password, password):
+            flash('Password incorrect, try again.', "danger")
+        else:
+            if user.email_confirmed:
+                login_user(user)
+                flash('You are logged in successfully', "success")
+                return redirect(url_for('index'))
+            else:
+                flash('You are yet to confirm your email address.', "danger")
+                return redirect(url_for('email_unconfirmed'))
     return render_template('auth/login.html', form=form)
 
 
