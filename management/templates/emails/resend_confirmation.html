@@ -1,0 +1,19 @@
+{% extends 'emails/base_message.html' %}
+
+{% block message %}
+
+<p>This is the new email confirmation you requested </p>
+<p>Kindly click on the link below to confirm your email address and activate your account.</p>
+
+<h4>
+  To confirm email:
+  <a href="{{ confirm_email_url }}">
+    click here
+  </a>
+</h4>
+
+<p>Alternatively, you can paste the following link in your browser's address bar:</p>
+<p>{{ confirm_email_url }}</p>
+<p>If you did not complete the request, ignore this email.</p>
+
+{% endblock %}

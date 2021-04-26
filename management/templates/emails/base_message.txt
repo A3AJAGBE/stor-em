@@ -1,0 +1,7 @@
+Dear {{ name }},
+
+{% block message %}
+{% endblock %}
+
+Sincerely,
+A3AJAGBE STOR'EM

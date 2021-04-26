@@ -1,0 +1,10 @@
+{% extends 'emails/base_message.html' %}
+
+{% block message %}
+This email was used to create an account with us if completed by you; Thank you for signing up.
+Kindly click on the link below to confirm your email address and activate your account.
+
+{{ confirm_email_url }}
+
+If you did not complete the request, ignore this email.
+{% endblock %}
