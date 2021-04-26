@@ -10,7 +10,7 @@
       <h1 class="display-3 fw-bold text-center pb-3">Start your journey with us</h1>
       <div class="col-lg-6 mx-auto">
            {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "lg btn-warning"}, extra_classes="p-3 border rounded-3 bg-light text-dark") }}
-            <h4 class="pt-3">Have an account? <a href="#" class="text-warning text-decoration-none">Login</a></h4>
+            <h4 class="pt-3">Have an account? <a href="{{ url_for('login') }}" class="text-warning text-decoration-none">Login</a></h4>
       </div>
     </div>
   </div>
