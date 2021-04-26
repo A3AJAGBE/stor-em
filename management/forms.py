@@ -52,3 +52,26 @@ class ChangePasswordForm(FlaskForm):
                                                     validators.Length(min=8,
                                                                       message="Password must be at least 8 characters.")])
     submit = SubmitField("Change password")
+
+
+class MerchantForm(FlaskForm):
+    merchant_name = StringField("Merchant Name: ", [validators.InputRequired(message="This field cannot be empty."),
+                                                    validators.Length(min=3, max=50,
+                                                                      message="merchant name must be between 3 to 50 "
+                                                                              "characters.")
+                                                    ])
+    contact_name = StringField("Contact Name: ")
+    email = StringField("Email Address: ", [validators.Email(message="That is not a valid email address.")])
+    phone_number = StringField("Phone Number: ", [validators.InputRequired(message="This field cannot be empty.")])
+    submit = SubmitField("Add Merchant")
+
+
+class CustomerForm(FlaskForm):
+    customer_name = StringField("Merchant Name: ", [validators.InputRequired(message="This field cannot be empty."),
+                                                    validators.Length(min=3, max=50,
+                                                                      message="Customer name must be between 3 to 50 "
+                                                                              "characters.")
+                                                    ])
+    email = StringField("Email Address: ", [validators.Email(message="That is not a valid email address.")])
+    phone_number = StringField("Phone Number: ")
+    submit = SubmitField("Add Customer")
