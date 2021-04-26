@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block title %} Merchant {% endblock %}
+
+{% block header %}
+
+<nav class="navbar navbar-expand-lg navbar-light bg-warning"  id="top">
+      <div class="container">
+        <a href="{{ url_for('index') }}" class="navbar-brand text-decoration-none link-dark">
+        <span class="fs-1 logo-text">A3AJAGBE STOR'EM</span>
+      </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav" >
+              <ul class="navbar-nav ml-auto">
+                  <div class="dropdown authenticated d-grid d-md-block gap-2">
+                  <button class="btn btn-dark btn-lg dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                      {{current_user.business_name}}
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="dropdownMenuButton1">
+                      <li><a class="dropdown-item" href="{{ url_for('profile', name=current_user.business_name) }}">Profile</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('change_password') }}">Change Password</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('merchant') }}">Merchant</a></li>
+                      <li><hr class="dropdown-divider"></li>
+                      <li><a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a></li>
+                  </ul>
+              </div>
+              </ul>
+            </div>
+      </div>
+    </nav>
+{% endblock %}
+
+{% block content %}
+
+ <div class="container my-5">
+   {% include "_messages.html" %}
+
+   <div class="row g-4">
+       <div class="col-lg-8">
+        <div class="p-3 border bg-light text-dark">
+            {% if current_user.merchants%}
+                <div class="table-responsive">
+                    <h2 class="text-center">Merchants </h2>
+                     <table class="table table-warning table-striped table-hover">
+                         <caption>List of current merchants</caption>
+                  <thead>
+                    <tr>
+                      <th scope="col">S/N</th>
+                      <th scope="col">Merchant Name</th>
+                      <th scope="col">Contact Name</th>
+                      <th scope="col">Email Address</th>
+                      <th scope="col">Phone Number</th>
+                        <th scope="col"></th>
+                    </tr>
+                  </thead>
+                    <tbody>
+                        {% for merchant in merchants %}
+                        <tr>
+                          <th scope="row">{{ merchant.id }}</th>
+                          <td>{{ merchant.merchant_name }}</td>
+                          <td>{{ merchant.contact_name }}</td>
+                          <td>{{ merchant.email }}</td>
+                          <td>{{ merchant.phone_number }}</td>
+                            <td>
+                                <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                    <a href="#" class="btn btn-primary btn-warning"><i class="fas fa-edit"></i> </a>
+                                    <a href="#" class="btn btn-primary btn-danger"><i class="fas fa-trash-alt"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                </table>
+                </div>
+            {% else %}
+                <h2 class="text-center">No merchant information yet. </h2>
+            {% endif %}
+        </div>
+       </div>
+       <div class="col-lg-4">
+         <div class="p-3 border bg-light text-dark">
+             <h2 class="text-center">Add new info </h2>
+            {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "lg btn-warning"}) }}
+         </div>
+       </div>
+     </div>
+ </div>
+
+{% endblock %}
