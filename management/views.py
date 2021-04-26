@@ -5,7 +5,7 @@ from management.models import *
 from management.forms import *
 from management.emails import *
 from flask import render_template, flash, redirect, url_for, request
-from flask_login import current_user, login_user, logout_user
+from flask_login import current_user, login_user, logout_user, login_required
 from itsdangerous import SignatureExpired
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -18,6 +18,12 @@ def load_user(user_id):
 @app.route('/')
 def index():
     return render_template('index.html')
+
+
+@app.route('/profile/<name>')
+@login_required
+def profile(name):
+    return render_template('profile.html')
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -86,7 +92,7 @@ def confirm_email(token):
 
             login_user(user)
             flash(f'Email confirmation successful {user.business_name}, you are now logged in.', 'success')
-            return redirect(url_for('index'))
+            return redirect(url_for('profile', name=user.business_name))
 
 
 @app.route('/unconfirmed', methods=['GET', 'POST'])
@@ -125,7 +131,7 @@ def login():
     form = LoginForm()
     if current_user.is_authenticated:
         flash("You are unable to view that page because you are currently logged in.", "warning")
-        return redirect(url_for('index'))
+        return redirect(url_for('profile', name=current_user.business_name))
     if form.validate_on_submit():
         email = form.email.data
         password = form.password.data
@@ -143,7 +149,7 @@ def login():
             if user.email_confirmed:
                 login_user(user)
                 flash('You are logged in successfully', "success")
-                return redirect(url_for('index'))
+                return redirect(url_for('profile', name=current_user.business_name))
             else:
                 flash('You are yet to confirm your email address.', "danger")
                 return redirect(url_for('email_unconfirmed'))
