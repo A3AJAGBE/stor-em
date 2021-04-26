@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from management import app, login_manager
+from management import login_manager
 from management.models import *
 from management.forms import *
 from management.emails import *
@@ -81,7 +81,7 @@ def confirm_email(token):
         user = Users.query.filter_by(email=email).first_or_404()
 
         if user.email_confirmed:
-            flash(f'"{user.business_name}", you have confirmed that email. Kindly login.', 'warning')
+            flash(f'"{user.business_name}", you have confirmed that email.', 'warning')
             return redirect(url_for('login'))
         else:
             user.email_confirmed = True
@@ -161,3 +161,63 @@ def logout():
     logout_user()
     flash('You are logged out successfully', "success")
     return redirect(url_for('index'))
+
+
+@app.route('/reset_password_request', methods=['GET', 'POST'])
+def reset_password_request():
+    form = ResetPasswordRequestForm()
+    if current_user.is_authenticated:
+        flash("You are unable to view that page because you are currently logged in.", "warning")
+        return redirect(url_for('profile', name=current_user.business_name))
+    if form.validate_on_submit():
+        email = form.email.data
+
+        user = Users.query.filter_by(email=email).first()
+
+        if not user:
+            flash('That is not a registered email address.', 'danger')
+            return redirect(request.referrer)
+        elif not user.email_confirmed:
+            flash('That email address is not confirmed.', 'danger')
+            return redirect(request.referrer)
+        else:
+            token = generate_token(email)
+            user_email = email
+            reset_password_url = url_for('reset_password', token=token, _external=True)
+            text_body = render_template('emails/password_reset.txt', reset_password_url=reset_password_url,
+                                        name=user.business_name)
+            html_body = render_template('emails/password_reset.html', reset_password_url=reset_password_url,
+                                        name=user.business_name)
+            email_password_reset(user_email, text_body, html_body)
+            flash(f'An email has been sent "{user.business_name}", check it for further instructions.', 'success')
+            return redirect(request.referrer)
+    return render_template('auth/reset_password_request.html', form=form)
+
+
+@app.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    form = ResetPasswordForm()
+    try:
+        email = confirm_token(token)
+    except SignatureExpired:
+        flash('The password reset link is Invalid or has expired, request for another', 'danger')
+        return redirect(url_for('reset_password_request'))
+    else:
+        user = Users.query.filter_by(email=email).first()
+
+        if not user.email_confirmed:
+            flash(f'"{user.business_name}", you have not confirmed that email. Kindly, confirm before proceeding.',
+                  'warning')
+            return redirect(url_for('email_unconfirmed'))
+
+        if form.validate_on_submit():
+            password = form.password.data
+            encrypt_password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
+            user.password = encrypt_password
+            db.session.add(user)
+            db.session.commit()
+
+            login_user(user)
+            flash(f'Password reset successful "{user.business_name}", you are now logged in.', 'success')
+            return redirect(url_for('profile', name=user.business_name))
+    return render_template('auth/password_reset.html', form=form)
