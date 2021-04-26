@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from management import login_manager
 from management.models import *
 from management.forms import *
@@ -8,6 +6,8 @@ from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user, login_required
 from itsdangerous import SignatureExpired
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
+from phonenumbers import NumberParseException, is_possible_number, parse, is_valid_number
 
 
 @login_manager.user_loader
@@ -24,6 +24,51 @@ def index():
 @login_required
 def profile(name):
     return render_template('profile.html')
+
+
+@app.route('/merchant', methods=['GET', 'POST'])
+@login_required
+def merchant():
+    merchants = Merchants.query.filter_by(user_id=current_user.id)
+    form = MerchantForm()
+    if form.validate_on_submit():
+        merchant_name = form.merchant_name.data
+        contact_name = form.contact_name.data
+        email = form.email.data
+        phone_number = form.phone_number.data
+
+        try:
+            number = parse(phone_number)
+            if not is_possible_number(number):
+                flash("Check the phone number again", "danger")
+                return redirect(request.referrer)
+            elif not is_valid_number(number):
+                flash("Invalid phone number", "danger")
+                return redirect(request.referrer)
+        except NumberParseException:
+            flash("Add the country code to phone number, eg. +353", "danger")
+            return redirect(request.referrer)
+        else:
+            # check that merchant does not exist
+            if Merchants.query.filter_by(merchant_name=merchant_name).first():
+                flash("That merchant already exist in the database", "danger")
+                return redirect(request.referrer)
+            elif Merchants.query.filter_by(phone_number=phone_number).first():
+                flash("That number exists in the database, use another", "danger")
+                return redirect(request.referrer)
+            else:
+                new_merchant = Merchants(
+                    merchant_name=merchant_name,
+                    contact_name=contact_name,
+                    email=email,
+                    phone_number=phone_number,
+                    user_id=current_user.id
+                )
+                db.session.add(new_merchant)
+                db.session.commit()
+                flash(f'"{merchant_name}" merchant info added successfully', "success")
+                return redirect(request.referrer)
+    return render_template('merchant.html', form=form, merchants=merchants)
 
 
 @app.route('/register', methods=['GET', 'POST'])
