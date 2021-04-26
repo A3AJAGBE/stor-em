@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block title %} Unconfirmed Email {% endblock %}
+
+
+{% block content %}
+<div class="centered">
+  <div class="container">
+    <div class="px-4 my-5 text-center">
+      <h1 class="display-5 fw-bold pb-3">Email confirmation is mandatory</h1>
+      <div class="col-lg-6 mx-auto">
+        {% include "_messages.html" %}
+
+            <p class="lh-base">Your email needs to be confirmed in order to have access to the platform, which you haven't
+                done. Check your inbox or spam folder; you should have gotten an email with a confirmation link.</p>
+
+            <h4>Didn't get the email? <a class="btn btn-warning btn-lg" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">Request new confirmation email</a></h4>
+
+            <div class="collapse" id="collapseExample">
+                {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "lg btn-warning"}, extra_classes="p-3 border rounded-3 bg-light text-dark") }}
+            </div>
+      </div>
+    </div>
+
+
+  </div>
+</div>
+
+{% endblock %}
