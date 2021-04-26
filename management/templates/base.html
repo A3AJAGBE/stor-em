@@ -16,6 +16,7 @@
   </head>
   <body>
 
+  {% block header %}
   <header class="bg-warning py-2">
     <div class="container d-flex justify-content-center">
       <a href="{{ url_for('index') }}" class="text-decoration-none link-dark">
@@ -23,7 +24,7 @@
       </a>
     </div>
   </header>
-
+  {% endblock %}
 
 
     {% block content %}
