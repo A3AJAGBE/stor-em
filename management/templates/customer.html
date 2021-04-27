@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block title %} Customer {% endblock %}
+
+{% block header %}
+  {% include "_verified_user_nav.html" %}
+{% endblock %}
+{% block content %}
+
+ <div class="container my-5">
+   {% include "_messages.html" %}
+
+   <div class="row g-4">
+       <div class="col-lg-8">
+        <div class="p-3 border bg-light text-dark">
+            {% if current_user.customers %}
+                <div class="table-responsive">
+                    <h2 class="text-center pb-4"> Customers </h2>
+                     <table class="table table-warning table-striped table-hover">
+                         <caption>List of customers</caption>
+                  <thead>
+                    <tr>
+                      <th scope="col">S/N</th>
+                      <th scope="col">Customer Name</th>
+                      <th scope="col">Email Address</th>
+                      <th scope="col">Phone Number</th>
+                        <th scope="col"></th>
+                    </tr>
+                  </thead>
+                    <tbody>
+                        {% for customer in customers %}
+                        <tr>
+                          <th scope="row">{{ customer.id }}</th>
+                          <td>{{ customer.customer_name }}</td>
+                          <td> <a href="mailto:{{ customer.email }}?subject=New product Notification from {{ current_user.business_name }}" class="text-decoration-none">{{ customer.email }}</a></td>
+                          <td><a href="tel:{{ customer.phone_number }}" class="text-decoration-none">{{ customer.phone_number }}</a></td>
+                            <td>
+                                <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                    <a href="{{ url_for('edit_customer', customer_id=customer.id) }}" class="btn btn-primary btn-warning"><i class="fas fa-edit"></i> </a>
+                                    <a href="{{ url_for('delete_customer', customer_id=customer.id) }}" class="btn btn-primary btn-danger"><i class="fas fa-trash-alt"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                </table>
+                    <small class="text-danger">*Every input must be unique to avoid errors.</small>
+                </div>
+            {% else %}
+                <h2 class="text-center">No customer information yet. </h2>
+            {% endif %}
+        </div>
+       </div>
+       <div class="col-lg-4">
+         <div class="p-3 border bg-light text-dark">
+             <h2 class="text-center pb-4">Add new info </h2>
+            {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "lg btn-warning"}) }}
+         </div>
+       </div>
+     </div>
+ </div>
+
+{% endblock %}
