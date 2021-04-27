@@ -61,9 +61,9 @@ class MerchantForm(FlaskForm):
                                                                               "characters.")
                                                     ])
     contact_name = StringField("Contact Name: ")
-    email = StringField("Email Address: ", [validators.Email(message="That is not a valid email address.")])
+    email = StringField("Email Address: ")
     phone_number = StringField("Phone Number: ", [validators.InputRequired(message="This field cannot be empty.")])
-    submit = SubmitField("Add Merchant")
+    submit = SubmitField("Submit")
 
 
 class CustomerForm(FlaskForm):
@@ -72,6 +72,6 @@ class CustomerForm(FlaskForm):
                                                                       message="Customer name must be between 3 to 50 "
                                                                               "characters.")
                                                     ])
-    email = StringField("Email Address: ", [validators.Email(message="That is not a valid email address.")])
+    email = StringField("Email Address: ")
     phone_number = StringField("Phone Number: ")
-    submit = SubmitField("Add Customer")
+    submit = SubmitField("Submit")

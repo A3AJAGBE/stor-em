@@ -34,8 +34,8 @@
                           <th scope="row">{{ merchant.id }}</th>
                           <td>{{ merchant.merchant_name }}</td>
                           <td>{{ merchant.contact_name }}</td>
-                          <td>{{ merchant.email }}</td>
-                          <td>{{ merchant.phone_number }}</td>
+                          <td> <a href="mailto:{{ merchant.email }}?subject=Enquiries from {{ merchant.merchant_name }}" class="text-decoration-none">{{ merchant.email }}</a></td>
+                          <td><a href="tel:{{ merchant.phone_number }}" class="text-decoration-none">{{ merchant.phone_number }}</a></td>
                             <td>
                                 <div class="btn-group" role="group" aria-label="Basic mixed styles example">
                                     <a href="{{ url_for('edit_merch', merchant_id=merchant.id) }}" class="btn btn-primary btn-warning"><i class="fas fa-edit"></i> </a>
@@ -46,6 +46,7 @@
                         {% endfor %}
                       </tbody>
                 </table>
+                    <small class="text-danger">*Every input must be unique except contact name to avoid errors.</small>
                 </div>
             {% else %}
                 <h2 class="text-center">No merchant information yet. </h2>

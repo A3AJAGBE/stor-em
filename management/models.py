@@ -26,8 +26,8 @@ class Merchants(db.Model):
     """Merchants table"""
     id = db.Column(db.Integer, primary_key=True)
     merchant_name = db.Column(db.String(50), unique=True, nullable=False)
-    contact_name = db.Column(db.String(50), server_default="N/A")
-    email = db.Column(db.String(120), unique=True, server_default="N/A")
+    contact_name = db.Column(db.String(50))
+    email = db.Column(db.String(120), unique=True)
     phone_number = db.Column(db.String(20), unique=True, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 

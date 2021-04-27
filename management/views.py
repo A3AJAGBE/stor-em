@@ -95,8 +95,8 @@ def edit_merch(merchant_id):
             flash("Add the country code to phone number, eg. +353", "danger")
             return redirect(request.referrer)
         else:
-            edit_merchant.merchant_name = editMerchant.merchant_name.title()
-            edit_merchant.contact_name = editMerchant.contact_name.title()
+            edit_merchant.merchant_name = editMerchant.merchant_name.data.title()
+            edit_merchant.contact_name = editMerchant.contact_name.data.title()
             edit_merchant.email = editMerchant.email.data
             edit_merchant.phone_number = editMerchant.phone_number.data
             db.session.commit()
