@@ -26,6 +26,9 @@ def profile(name):
     return render_template('profile.html')
 
 
+"""Merchants Related Functions"""
+
+
 @app.route('/merchant', methods=['GET', 'POST'])
 @login_required
 def merchant():
@@ -112,6 +115,96 @@ def delete_merch(merchant_id):
     db.session.commit()
     flash("Merchant deleted successfully", "success")
     return redirect(request.referrer)
+
+
+"""Customers Related Functions"""
+
+
+@app.route('/customer', methods=['GET', 'POST'])
+@login_required
+def customer():
+    customers = Customers.query.filter_by(user_id=current_user.id)
+    form = CustomerForm()
+    if form.validate_on_submit():
+        customer_name = form.customer_name.data.title()
+        email = form.email.data
+        phone_number = form.phone_number.data
+
+        try:
+            number = parse(phone_number)
+            if not is_possible_number(number):
+                flash("Check the phone number again", "danger")
+                return redirect(request.referrer)
+            elif not is_valid_number(number):
+                flash("Invalid phone number", "danger")
+                return redirect(request.referrer)
+        except NumberParseException:
+            flash("Add the country code to phone number, eg. +353", "danger")
+            return redirect(request.referrer)
+        else:
+            # check that customer does not exist
+            if Customers.query.filter_by(customer_name=customer_name).first():
+                flash("That customer already exist in the database", "danger")
+                return redirect(request.referrer)
+            elif Customers.query.filter_by(phone_number=phone_number).first():
+                flash("That number exists in the database, use another", "danger")
+                return redirect(request.referrer)
+            else:
+                new_customer = Customers(
+                    customer_name=customer_name,
+                    email=email,
+                    phone_number=phone_number,
+                    user_id=current_user.id
+                )
+                db.session.add(new_customer)
+                db.session.commit()
+                flash(f'"{customer_name}" customer info added successfully', "success")
+                return redirect(request.referrer)
+    return render_template('customer.html', form=form, customers=customers)
+
+
+@app.route('/edit customer/<int:customer_id>', methods=['GET', 'POST'])
+@login_required
+def edit_customer(customer_id):
+    edit_cust = Customers.query.get(customer_id)
+    form = CustomerForm(
+        customer_name=edit_cust.customer_name,
+        email=edit_cust.email,
+        phone_number=edit_cust.phone_number,
+    )
+    if form.validate_on_submit():
+
+        try:
+            number = parse(form.phone_number.data)
+            if not is_possible_number(number):
+                flash("Check the phone number again", "danger")
+                return redirect(request.referrer)
+            elif not is_valid_number(number):
+                flash("Invalid phone number", "danger")
+                return redirect(request.referrer)
+        except NumberParseException:
+            flash("Add the country code to phone number, eg. +353", "danger")
+            return redirect(request.referrer)
+        else:
+            edit_cust.customer_name = form.customer_name.data.title()
+            edit_cust.email = form.email.data
+            edit_cust.phone_number = form.phone_number.data
+            db.session.commit()
+            flash(f'"{edit_cust.customer_name}" customer information updated successfully', "success")
+            return redirect(url_for('customer'))
+    return render_template('edit_customer.html', form=form)
+
+
+@app.route("/delete customer/<int:customer_id>")
+def delete_customer(customer_id):
+    delete_cust = Customers.query.get(customer_id)
+    db.session.delete(delete_cust)
+    db.session.commit()
+    flash("Customer deleted successfully", "success")
+    return redirect(request.referrer)
+
+
+"""Auth Related Functions"""
 
 
 @app.route('/register', methods=['GET', 'POST'])
