@@ -15,7 +15,7 @@
         <div class="p-3 border bg-light text-dark">
             {% if current_user.merchants%}
                 <div class="table-responsive">
-                    <h2 class="text-center">Merchants </h2>
+                    <h2 class="text-center pb-4">Merchants </h2>
                      <table class="table table-warning table-striped table-hover">
                          <caption>List of current merchants</caption>
                   <thead>
@@ -46,7 +46,7 @@
                         {% endfor %}
                       </tbody>
                 </table>
-                    <small class="text-danger">*Every input must be unique except contact name to avoid errors.</small>
+                    <small class="text-danger">*Merchant's name and number must be unique to avoid errors.</small>
                 </div>
             {% else %}
                 <h2 class="text-center">No merchant information yet. </h2>
@@ -55,7 +55,7 @@
        </div>
        <div class="col-lg-4">
          <div class="p-3 border bg-light text-dark">
-             <h2 class="text-center">Add new info </h2>
+             <h2 class="text-center pb-4">Add new info </h2>
             {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "lg btn-warning"}) }}
          </div>
        </div>

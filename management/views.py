@@ -247,7 +247,7 @@ def register():
 
             flash(f'Registration successful "{business_name}", check for email confirmation in your inbox',
                   "success")
-            return redirect(request.referrer)
+            return redirect(url_for('index'))
     return render_template('auth/register.html', form=form)
 
 

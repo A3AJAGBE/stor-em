@@ -67,7 +67,7 @@ class MerchantForm(FlaskForm):
 
 
 class CustomerForm(FlaskForm):
-    customer_name = StringField("Merchant Name: ", [validators.InputRequired(message="This field cannot be empty."),
+    customer_name = StringField("Customer Name: ", [validators.InputRequired(message="This field cannot be empty."),
                                                     validators.Length(min=3, max=50,
                                                                       message="Customer name must be between 3 to 50 "
                                                                               "characters.")

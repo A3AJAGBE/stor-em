@@ -26,8 +26,8 @@ class Merchants(db.Model):
     """Merchants table"""
     id = db.Column(db.Integer, primary_key=True)
     merchant_name = db.Column(db.String(50), unique=True, nullable=False)
-    contact_name = db.Column(db.String(50))
-    email = db.Column(db.String(120), unique=True)
+    contact_name = db.Column(db.String(50), nullable=True, server_default="N/A")
+    email = db.Column(db.String(120), nullable=True, server_default="N/A")
     phone_number = db.Column(db.String(20), unique=True, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
@@ -39,7 +39,7 @@ class Customers(db.Model):
     """Merchants table"""
     id = db.Column(db.Integer, primary_key=True)
     customer_name = db.Column(db.String(50), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True)
+    email = db.Column(db.String(120), nullable=True, server_default="N/A")
     phone_number = db.Column(db.String(20), unique=True, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
